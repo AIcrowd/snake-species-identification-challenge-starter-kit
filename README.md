@@ -1,48 +1,55 @@
-# league-of-nations-archives-digitization-challenge-starter-kit
-![CrowdAI-Logo](https://github.com/crowdAI/crowdai/raw/master/app/assets/images/misc/crowdai-logo-smile.svg?sanitize=true)
+# snake-species-identification-challenge-starter-kit
+![AIcrowd-Logo](https://github.com/AIcrowd/AIcrowd/blob/master/app/assets/images/misc/aicrowd-horizontal.png)
 
-This is a starter kit for the [League of Nations archives digitization challenge](https://www.crowdai.org/challenges/league-of-nations-archives-digitization-challenge) on 
-[crowdAI](https://www.crowdai.org).
+This is a starter kit for the [Snakes Species Identification Challenge](https://www.aicrowd.com/challenges/snake-species-identification-challenge) on 
+[AIcrowd](https://www.aicrowd.com).
 
 # Problem Statement
-This challenge is an image classification problem, where in the training set you are given 4692 images belonging to either `english` or `french`, and then you are provided 14216 images in the test set, where you are supposed to predict the class the said image belongs to.
+In this challenge you will be provided with a dataset of RGB images of snakes, and their corresponding species (class). The goal is to train a classification model.
+
+The difficulty of the challenge relies on the dataset characteristics, as there might be a high intraclass variance for certain classes and a low interclass variance among others, as shown in the examples from the Datasets section. Also, the distribution of images between class is not equal for all classes: the class with the most images has 11,092, while the class with the fewest images has 517.
+
+For now, we would like to make the barrier to entry much lower and demonstrate that an approach works well on 45 species and 82,601 images. The idea would be then to renew the challenge every 4 months in order to get closer to our final goal, which is to build an algorithm which best predicts which antivenin should be given (if any) when given a specific image.
 
 # Dataset
-The datasets are available in the [Dataset section of the challenge page](https://www.crowdai.org/challenges/league-of-nations-archives-digitization-challenge/dataset_files), and on following the links, you will have two files : 
+The datasets are available in the [Resources section of the challenge page](https://www.aicrowd.com/challenges/snake-species-identification-challenge/dataset_files), and on following the links, you will have 4 files : 
 
+* `round1_test.tar.gz`
 * `train.tar.gz`
-* `test.tar.gz`
+* `sample_submission.csv`
+* `class_idx_mapping.csv`
 
-`train.tar.gz` expands into a folder containing two subfolders, of the form : 
+
+`train.tar.gz` expands into a folder containing 45 subfolders, of the form : 
 
 ```
 .
 └── train
-    ├── en (contains *.jpg images)
-    └── fr (contains *.jpg images)
+    └── class-X
 ```
-The folders `en` and `fr` have `.jpg` images belonging to the respective class.
-For the rest of this starter kit you are encourage to download both the files, and extract them and place them in the `data/` directory to make the directory structure look like : 
+
+The folders `class-X` have `.jpg` images belonging to the respective class. These class ids are mapped to there class names in `class_idx_mapping.csv`. 
+
+`round1_test.tar.gz` expands into a folder round1 containing `.jpg` files to be predicted :
+
 ```
 .
-└── data
-    ├── test_images  (contains *.jpg images)
-    └── train 
-        ├── en (contains *.jpg images)
-        └── fr (contains *.jpg images)
+└── round1 (contains .jpg files)
 ```
 
 # Prediction file format
-The predictions should be a valid CSV file with 14216 rows (one for each of the images in the test set), and the following headers :
+The predictions should be a valid CSV file with 17731 rows (one for each of the images in the test set), and the following headers :
 ```
-filename, prob_en, prob_fr
+filename, agkistrodon_contortrix, agkistrodon_piscivorus, boa_imperator, carphophis_amoenus, charina_bottae, coluber_constrictor, crotalus_adamanteus, crotalus_atrox, crotalus_horridus, crotalus_pyrrhus, crotalus_ruber, crotalus_scutulatus, crotalus_viridis, diadophis_punctatus, haldea_striatula, heterodon_platirhinos, hierophis_viridiflavus, lampropeltis_californiae, lampropeltis_triangulum, lichanura_trivirgata, masticophis_flagellum, natrix_natrix, nerodia_erythrogaster, nerodia_fasciata, nerodia_rhombifer, nerodia_sipedon, opheodrys_aestivus, opheodrys_vernalis, pantherophis_alleghaniensis, pantherophis_emoryi, pantherophis_guttatus, pantherophis_obsoletus, pantherophis_spiloides, pantherophis_vulpinus, pituophis_catenifer, regina_septemvittata, rhinocheilus_lecontei, storeria_dekayi, storeria_occipitomaculata, thamnophis_elegans, thamnophis_marcianus, thamnophis_ordinoides, thamnophis_proximus, thamnophis_radix, thamnophis_sirtalis
 ```
-where :    
+where :
 * `filename` : filename of a single test file
-* `prob_en` : the confidence `[0,1]` that this image belongs to the class `english`
-* `prob_fr` : the confidence `[0,1]` that this image belongs to the class `french`
+* `agkistrodon_contortrix` : the confidence `[0,1]` that this image belongs to the class `agkistrodon_contortrix`
+* `agkistrodon_piscivorus` : the confidence `[0,1]` that this image belongs to the class `agkistrodon_piscivorus`
 
-The sum of of `prob_en` and `prob_fr` for a single row should be less than 1.
+And so on for the rest of the classes
+
+The sum of probabilities for a single row should be less than or equal to 1.
 
 # Random prediction
 The you can use the script below to generate a sample submission, which should be saved at `random_prediction.csv`.
@@ -60,38 +67,63 @@ def softmax(x):
 
 
 LINES = []
-LINES.append("filename,prob_en,prob_fr")
-for _file_path in glob.glob("data/test_images/*.jpg"):
-    probs = softmax(np.random.rand(2))
-    LINES.append("{},{},{}".format(
+LINES.append('filename,agkistrodon_contortrix,agkistrodon_piscivorus,boa_imperator,carphophis_amoenus,charina_bottae,coluber_constrictor,crotalus_adamanteus,crotalus_atrox,crotalus_horridus,crotalus_pyrrhus,crotalus_ruber,crotalus_scutulatus,crotalus_viridis,diadophis_punctatus,haldea_striatula,heterodon_platirhinos,hierophis_viridiflavus,lampropeltis_californiae,lampropeltis_triangulum,lichanura_trivirgata,masticophis_flagellum,natrix_natrix,nerodia_erythrogaster,nerodia_fasciata,nerodia_rhombifer,nerodia_sipedon,opheodrys_aestivus,opheodrys_vernalis,pantherophis_alleghaniensis,pantherophis_emoryi,pantherophis_guttatus,pantherophis_obsoletus,pantherophis_spiloides,pantherophis_vulpinus,pituophis_catenifer,regina_septemvittata,rhinocheilus_lecontei,storeria_dekayi,storeria_occipitomaculata,thamnophis_elegans,thamnophis_marcianus,thamnophis_ordinoides,thamnophis_proximus,thamnophis_radix,thamnophis_sirtalis')
+
+for _file_path in glob.glob("round1/*.jpg"):
+    probs = softmax(np.random.rand(45))
+    LINES.append("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(
         os.path.basename(_file_path),
         probs[0],
-        probs[1]
+        probs[1],
+        probs[2],
+        probs[3],
+        probs[4],
+        probs[5],
+        probs[6],
+        probs[7],
+        probs[8],
+        probs[9],
+        probs[10],
+        probs[11],
+        probs[12],
+        probs[13],
+        probs[14],
+        probs[15],
+        probs[16],
+        probs[17],
+        probs[18],
+        probs[19],
+        probs[20],
+        probs[21],
+        probs[22],
+        probs[23],
+        probs[24],
+        probs[25],
+        probs[26],
+        probs[27],
+        probs[28],
+        probs[29],
+        probs[30],
+        probs[31],
+        probs[32],
+        probs[33],
+        probs[34],
+        probs[35],
+        probs[36],
+        probs[37],
+        probs[38],
+        probs[39],
+        probs[40],
+        probs[41],
+        probs[42],
+        probs[43],
+        probs[44]
     ))
 
 fp = open("random_prediction.csv", "w")
 fp.write("\n".join(LINES))
 fp.close()
 ```
-
-# Submission
-
-Then you can submit on crowdAI, by going to the challenge page and clicking on `Create Submission`: 
-![create_submission](https://i.imgur.com/dqWSOcn.png)
-
-
-and then upload the file by clicking on `Browse file` at the bottom of the screen:
-
-
-
-![browse_file](https://i.imgur.com/QXQcLeS.png)
-
-
-and then finally, your submission should either be accepted, or the error shown : 
-
-
-![feedback](https://i.imgur.com/DmSExeK.png)
-
 
 **Best of Luck**
 
