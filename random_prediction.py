@@ -16,7 +16,7 @@ LINES.append('filename,agkistrodon_contortrix,agkistrodon_piscivorus,boa_imperat
 for _file_path in glob.glob("round1/*.jpg"):
 	probs = softmax(np.random.rand(45))
 	probs = list(map(str, probs))
-	LINES.append(",".join([os.path.basename(_file_path)] + probs ))
+	LINES.append(",".join([os.path.basename(_file_path)] + probs))
 
 fp = open("random_prediction.csv", "w")
 fp.write("\n".join(LINES))

@@ -28,7 +28,9 @@ The datasets are available in the [Resources section of the challenge page](http
     └── class-X
 ```
 
-The folders `class-X` have `.jpg` images belonging to the respective class. These class ids are mapped to there class names in `class_idx_mapping.csv`. 
+Here X is the class id which is a unique integer for every class. The folders `class-X` have `.jpg` images belonging to the respective class. 
+The class labels in the training set and submission format are different. The class labels give for training are class ids which are integers whereas in the submission file the class name is expected with the probabilities.
+To map the class ids to class names a file `class_idx_mapping.csv` is provided, where the column labels are `original_class` and `class_idx` which correspond to `class names` and `class ids` respectively. The label change can be made using this file.
 
 `round1_test.tar.gz` expands into a folder round1 containing `.jpg` files to be predicted :
 
@@ -70,8 +72,9 @@ LINES = []
 LINES.append('filename,agkistrodon_contortrix,agkistrodon_piscivorus,boa_imperator,carphophis_amoenus,charina_bottae,coluber_constrictor,crotalus_adamanteus,crotalus_atrox,crotalus_horridus,crotalus_pyrrhus,crotalus_ruber,crotalus_scutulatus,crotalus_viridis,diadophis_punctatus,haldea_striatula,heterodon_platirhinos,hierophis_viridiflavus,lampropeltis_californiae,lampropeltis_triangulum,lichanura_trivirgata,masticophis_flagellum,natrix_natrix,nerodia_erythrogaster,nerodia_fasciata,nerodia_rhombifer,nerodia_sipedon,opheodrys_aestivus,opheodrys_vernalis,pantherophis_alleghaniensis,pantherophis_emoryi,pantherophis_guttatus,pantherophis_obsoletus,pantherophis_spiloides,pantherophis_vulpinus,pituophis_catenifer,regina_septemvittata,rhinocheilus_lecontei,storeria_dekayi,storeria_occipitomaculata,thamnophis_elegans,thamnophis_marcianus,thamnophis_ordinoides,thamnophis_proximus,thamnophis_radix,thamnophis_sirtalis')
 
 for _file_path in glob.glob("round1/*.jpg"):
-    probs = softmax(np.random.rand(45))
-    LINES.append(",".join([os.path.basename(_file_path)] + list(softmax(np.random.rand(45)))))
+	probs = softmax(np.random.rand(45))
+	probs = list(map(str, probs))
+	LINES.append(",".join([os.path.basename(_file_path)] + probs))
 
 fp = open("random_prediction.csv", "w")
 fp.write("\n".join(LINES))
