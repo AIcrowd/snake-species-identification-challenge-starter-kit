@@ -71,54 +71,7 @@ LINES.append('filename,agkistrodon_contortrix,agkistrodon_piscivorus,boa_imperat
 
 for _file_path in glob.glob("round1/*.jpg"):
     probs = softmax(np.random.rand(45))
-    LINES.append("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(
-        os.path.basename(_file_path),
-        probs[0],
-        probs[1],
-        probs[2],
-        probs[3],
-        probs[4],
-        probs[5],
-        probs[6],
-        probs[7],
-        probs[8],
-        probs[9],
-        probs[10],
-        probs[11],
-        probs[12],
-        probs[13],
-        probs[14],
-        probs[15],
-        probs[16],
-        probs[17],
-        probs[18],
-        probs[19],
-        probs[20],
-        probs[21],
-        probs[22],
-        probs[23],
-        probs[24],
-        probs[25],
-        probs[26],
-        probs[27],
-        probs[28],
-        probs[29],
-        probs[30],
-        probs[31],
-        probs[32],
-        probs[33],
-        probs[34],
-        probs[35],
-        probs[36],
-        probs[37],
-        probs[38],
-        probs[39],
-        probs[40],
-        probs[41],
-        probs[42],
-        probs[43],
-        probs[44]
-    ))
+    LINES.append(",".join([os.path.basename(_file_path)] + list(softmax(np.random.rand(45)))))
 
 fp = open("random_prediction.csv", "w")
 fp.write("\n".join(LINES))
