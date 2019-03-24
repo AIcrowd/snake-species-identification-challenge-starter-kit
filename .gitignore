@@ -1,2 +1,4 @@
-data/*
+data/class_idx_mapping.csv
+data/round1
+data/train
 random_prediction.csv
