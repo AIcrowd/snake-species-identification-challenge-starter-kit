@@ -69,9 +69,16 @@ def softmax(x):
 
 
 LINES = []
-LINES.append('filename,agkistrodon_contortrix,agkistrodon_piscivorus,boa_imperator,carphophis_amoenus,charina_bottae,coluber_constrictor,crotalus_adamanteus,crotalus_atrox,crotalus_horridus,crotalus_pyrrhus,crotalus_ruber,crotalus_scutulatus,crotalus_viridis,diadophis_punctatus,haldea_striatula,heterodon_platirhinos,hierophis_viridiflavus,lampropeltis_californiae,lampropeltis_triangulum,lichanura_trivirgata,masticophis_flagellum,natrix_natrix,nerodia_erythrogaster,nerodia_fasciata,nerodia_rhombifer,nerodia_sipedon,opheodrys_aestivus,opheodrys_vernalis,pantherophis_alleghaniensis,pantherophis_emoryi,pantherophis_guttatus,pantherophis_obsoletus,pantherophis_spiloides,pantherophis_vulpinus,pituophis_catenifer,regina_septemvittata,rhinocheilus_lecontei,storeria_dekayi,storeria_occipitomaculata,thamnophis_elegans,thamnophis_marcianus,thamnophis_ordinoides,thamnophis_proximus,thamnophis_radix,thamnophis_sirtalis')
 
-for _file_path in glob.glob("round1/*.jpg"):
+with open('data/class_idx_mapping.csv') as f:
+	classes = ['filename']
+	for line in f.readlines()[1:]:
+		class_name = line.split(",")[0]
+		classes.append(class_name) 
+
+LINES.append(','.join(classes))
+
+for _file_path in glob.glob("data/round1/*.jpg"):
 	probs = softmax(np.random.rand(45))
 	probs = list(map(str, probs))
 	LINES.append(",".join([os.path.basename(_file_path)] + probs))
