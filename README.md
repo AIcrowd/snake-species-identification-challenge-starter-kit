@@ -87,8 +87,12 @@ fp = open("random_prediction.csv", "w")
 fp.write("\n".join(LINES))
 fp.close()
 ```
+# Starter code 
+
+A jupyter notebook has been provided for the starter code of the snakes prediction challenge. This was based on an implementation of https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
+
 
 **Best of Luck**
 
 # Author
-Sharada Mohanty <sharada.mohanty@epfl.ch>
+Mridul Nagpal <mnagpal@aicrowd.com>
