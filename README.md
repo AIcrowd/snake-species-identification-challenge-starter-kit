@@ -62,6 +62,9 @@ import numpy as np
 import os
 import glob
 
+AICROWD_TEST_IMAGES_PATH = os.getenv('AICROWD_TEST_IMAGES_PATH', 'data/round1')
+AICROWD_PREDICTIONS_OUTPUT_PATH = os.getenv('AICROWD_PREDICTIONS_OUTPUT_PATH', 'random_prediction.csv')
+
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
     e_x = np.exp(x - np.max(x))
@@ -74,16 +77,17 @@ with open('data/class_idx_mapping.csv') as f:
 	classes = ['filename']
 	for line in f.readlines()[1:]:
 		class_name = line.split(",")[0]
-		classes.append(class_name) 
+		classes.append(class_name)
 
 LINES.append(','.join(classes))
 
-for _file_path in glob.glob("data/round1/*.jpg"):
+images_path = AICROWD_TEST_IMAGES_PATH + '/*.jpg'
+for _file_path in glob.glob(images_path):
 	probs = softmax(np.random.rand(45))
 	probs = list(map(str, probs))
 	LINES.append(",".join([os.path.basename(_file_path)] + probs))
 
-fp = open("random_prediction.csv", "w")
+fp = open(AICROWD_PREDICTIONS_OUTPUT_PATH, "w")
 fp.write("\n".join(LINES))
 fp.close()
 ```
@@ -91,6 +95,67 @@ fp.close()
 
 A jupyter notebook has been provided for the starter code of the snakes prediction challenge. This was based on an implementation of https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
 
+# Round 2 Submission
+
+To submit to the challenge you'll need to ensure you've set up an appropriate repository structure, create a private git repository at https://gitlab.aicrowd.com with the contents of your submission, and push a git tag corresponding to the version of your repository you'd like to submit.
+
+### Repository Structure
+
+We have created a sample submission repository which you can use as reference. You can find it [here](https://gitlab.aicrowd.com/aicrowd-bot/snakes_challenge_sample_submission)
+
+#### aicrowd.json
+Each repository should have a aicrowd.json file with the following fields:
+
+```
+{
+    "challenge_id" : "snake-species-identification-challenge",
+    "grader_id": "snake-species-identification-challenge",
+    "authors" : ["aicrowd-user"],
+    "description" : "Snakes Random Classification Agent"
+}
+```
+
+This file is used to identify your submission as a part of the Snake Species Identification Challenge.  You must use the `challenge_id` and `grader_id` specified above in the submission. 
+
+#### Submission environment configuration
+
+You can specify your software environment by using all the [available configuration options of repo2docker](https://repo2docker.readthedocs.io/en/latest/config_files.html).
+
+For example, to use Anaconda configuration files you can include an **environment.yml** file:
+```
+conda env export --no-build > environment.yml
+```
+
+It is important to include `--no-build` flag, which is important for allowing your Anaconda config to be replicable cross-platform.
+
+#### Code Entrypoint
+
+The evaluator will use `/home/aicrowd/run.sh` as the entrypoint. Please remember to have a `run.sh` at the root which can instantiate any necessary environment variables and execute your code. This repository includes a sample `run.sh` file.
+
+### Submitting 
+To make a submission, you will have to create a private repository on [https://gitlab.aicrowd.com](https://gitlab.aicrowd.com).
+
+You will have to add your SSH Keys to your GitLab account by following the instructions [here](https://docs.gitlab.com/ee/gitlab-basics/create-your-ssh-keys.html).
+If you do not have SSH Keys, you will first need to [generate one](https://docs.gitlab.com/ee/ssh/README.html#generating-a-new-ssh-key-pair).
+
+Then you can create a submission by making a *tag push* to your repository, adding the correct git remote and pushing to the remote:
+
+```
+cd snake-species-identification-challenge
+# Add AICrowd git remote endpoint
+git remote add aicrowd git@gitlab.aicrowd.com:<YOUR_AICROWD_USER_NAME>/snake-species-identification-challenge.git
+git push aicrowd master
+
+# Create a tag for your submission and push
+git tag -am "submission-v0.1" submission-v0.1
+git push aicrowd master
+git push aicrowd submission-v0.1
+
+# Note : If the contents of your repository (latest commit hash) does not change, 
+# then pushing a new tag will not trigger a new evaluation.
+```
+You now should be able to see the details of your submission at : 
+[gitlab.aicrowd.com/<YOUR_AICROWD_USER_NAME>/snake-species-identification-challenge/issues](gitlab.aicrowd.com/<YOUR_AICROWD_USER_NAME>/snake-species-identification-challenge/issues)
 
 **Best of Luck**
 
