@@ -17,85 +17,87 @@ The datasets are available in the [Resources section of the challenge page](http
 * `train_images.tar.gz`
 * `train_labels.tar.gz`
 * `test_images_small.tar.gz`
-* `test_annotations_small.csv`
+* `test_metadata_small.tar.gz`
+
+Where : 
+
+* `train_images.tar.gz` untars into a folder containing `129952` images of snakes spread across `85` different snake species. 
+* `train_labels.tar.gz` untars into a CSV with the following structure : 
+```
+hashed_id,country,continent,scientific_name,filename
+fd148672d8,United States of America,North America,nerodia-sipedon,fd148672d8.jpg
+09874637dc,United States of America,North America,nerodia-sipedon,09874637dc.jpg
+12da366539,United States of America,North America,nerodia-sipedon,12da366539.jpg
+69b2c09380,United States of America,North America,pantherophis-obsoletus,69b2c09380.jpg
+c32413ddbb,United States of America,North America,crotalus-horridus,c32413ddbb.jpg
+1707c259ed,United States of America,North America,heterodon-platirhinos,1707c259ed.jpg
+```
+
+With the following columns : 
+
+    - `hashed_id` : Unique ID of a single image
+    - `filename` : Name of the file corresponding to this case (the images are present in the `train_images.tar.gz`)
+    - `scientific_name` : Unique class name for the image in question
+    - `country` : Country where the image was taken
+    - `continent` : Continent where the image was taken
 
 
-`train_images.tar.gz.tar.gz` expands into a folder containing 45 subfolders, of the form : 
+* `test_images_small.tar.gz` expands into a folder `.jpg` files representing a **small sample** of the test set. This has been provided to help you locally test your submission before submitting it.
+* `test_metadata_small.tar.gz` expands into a CSV file with the following structure : 
+```
+hashed_id,country,continent,filename
+209babdafc,United States of America,North America,209babdafc.jpg
+bc39befd80,United States of America,North America,bc39befd80.jpg
+2f7a671e66,United States of America,North America,2f7a671e66.jpg
+3780a13264,United States of America,North America,3780a13264.jpg
+f7c234cc00,United States of America,North America,f7c234cc00.jpg
+2073a92f7e,United States of America,North America,2073a92f7e.jpg
+9365f16d59,United States of America,North America,9365f16d59.jpg
+31224dcc43,United States of America,North America,31224dcc43.jpg
+28a07aa909,United States of America,North America,28a07aa909.jpg
+```
+
+With the following columns : 
+
+    - `hashed_id` : Unique ID of a single test image
+    - `filename` : Name of the file corresponding to this case (the images are present in the `train_images.tar.gz`)
+    - `country` : Country where the image was taken
+    - `continent` : Continent where the image was taken
+
+and the task at hand is to predict the probability distribution for the possible values in the `scientific_name` column (as provided in the training annotations). 
+
+Before moving into the next phase, it would be good to download the datasets from the above mentioned links, and organize them in the `./data` folder with the following folder structure : 
 
 ```
-.
-└── train_images.tar.gz
-    └── class-X
+├── data
+│   ├── test_images_small
+│   │   ├── 01978e1d8d.jpg
+│   │   ├── 019d1e8cae.jpg
+│   │   ├── 04a3809dda.jpg
+│   │   ├── ..............
+│   │   ├── ..............
+│   │   ├── ..............
+│   │   ├── fbb98a8213.jpg
+│   │   ├── fc9fd55077.jpg
+│   │   └── fce0ab02dd.jpg
+│   └── test_metadata_small.csv
 ```
-
-Here X is the class id which is a unique integer for every class. The folders `class-X` have `.jpg` images belonging to the respective class. 
-The class labels in the training set and submission format are different. The class labels give for training are class ids which are integers whereas in the submission file the class name is expected with the probabilities.
-To map the class ids to class names a file `class_idx_mapping.csv` is provided, where the column labels are `original_class` and `class_idx` which correspond to `class names` and `class ids` respectively. The label change can be made using this file.
-
-`round1_test.tar.gz` expands into a folder round1 containing `.jpg` files to be predicted :
-
-```
-.
-└── round1 (contains .jpg files)
-```
+**NOTE** : The training related files and directories are excluded in the illustration above for simplicity.
 
 # Prediction file format
-The predictions should be a valid CSV file with 17731 rows (one for each of the images in the test set), and the following headers :
-```
-filename, agkistrodon_contortrix, agkistrodon_piscivorus, boa_imperator, carphophis_amoenus, charina_bottae, coluber_constrictor, crotalus_adamanteus, crotalus_atrox, crotalus_horridus, crotalus_pyrrhus, crotalus_ruber, crotalus_scutulatus, crotalus_viridis, diadophis_punctatus, haldea_striatula, heterodon_platirhinos, hierophis_viridiflavus, lampropeltis_californiae, lampropeltis_triangulum, lichanura_trivirgata, masticophis_flagellum, natrix_natrix, nerodia_erythrogaster, nerodia_fasciata, nerodia_rhombifer, nerodia_sipedon, opheodrys_aestivus, opheodrys_vernalis, pantherophis_alleghaniensis, pantherophis_emoryi, pantherophis_guttatus, pantherophis_obsoletus, pantherophis_spiloides, pantherophis_vulpinus, pituophis_catenifer, regina_septemvittata, rhinocheilus_lecontei, storeria_dekayi, storeria_occipitomaculata, thamnophis_elegans, thamnophis_marcianus, thamnophis_ordinoides, thamnophis_proximus, thamnophis_radix, thamnophis_sirtalis
-```
-where :
-* `filename` : filename of a single test file
-* `agkistrodon_contortrix` : the confidence `[0,1]` that this image belongs to the class `agkistrodon_contortrix`
-* `agkistrodon_piscivorus` : the confidence `[0,1]` that this image belongs to the class `agkistrodon_piscivorus`
-
-And so on for the rest of the classes
-
-The sum of probabilities for a single row should be less than or equal to 1.
+The predictions should be a valid CSV file with the same number of rows as the number of images in the test set (listed also in the `test_metadata` file), and the header should be the `hashed_id` of each test case, and the probability distribution across all the valid snake species in this round. The `run.py` script has a list of the valid snake species for this round, which can also be created from the `scientific_name` column in the `train_labels.csv` file. Overall, the file is expected to have `86` columns (`1` for hashed_id and `85` for each of the included snake species). The sum of the probabilities across all the snake-species columns should be `< 1.0`.
 
 # Random prediction
-The you can use the script below to generate a sample submission, which should be saved at `random_prediction.csv`.
-```python
-#!/usr/bin/env python
+A sample script which generates a random prediction for the whole test set is included in the [run.py](run.py). The included inline comments better illustrate the structure expected. Please ensure to use the following environment variables : 
 
-import numpy as np
-import os
-import glob
+* `AICROWD_TEST_IMAGES_PATH`
+* `AICROWD_TEST_METADATA_PATH`
+* `AICROWD_PREDICTIONS_OUTPUT_PATH`
 
-AICROWD_TEST_IMAGES_PATH = os.getenv('AICROWD_TEST_IMAGES_PATH', 'data/round1')
-AICROWD_PREDICTIONS_OUTPUT_PATH = os.getenv('AICROWD_PREDICTIONS_OUTPUT_PATH', 'random_prediction.csv')
-
-def softmax(x):
-    """Compute softmax values for each sets of scores in x."""
-    e_x = np.exp(x - np.max(x))
-    return e_x / e_x.sum(axis=0) # only difference
+to get the path to the test images, the test metadata, and the final path where the prediction outputs are to be saved. 
 
 
-LINES = []
-
-with open('data/class_idx_mapping.csv') as f:
-	classes = ['filename']
-	for line in f.readlines()[1:]:
-		class_name = line.split(",")[0]
-		classes.append(class_name)
-
-LINES.append(','.join(classes))
-
-images_path = AICROWD_TEST_IMAGES_PATH + '/*.jpg'
-for _file_path in glob.glob(images_path):
-	probs = softmax(np.random.rand(45))
-	probs = list(map(str, probs))
-	LINES.append(",".join([os.path.basename(_file_path)] + probs))
-
-fp = open(AICROWD_PREDICTIONS_OUTPUT_PATH, "w")
-fp.write("\n".join(LINES))
-fp.close()
-```
-# Starter code 
-
-A jupyter notebook has been provided for the starter code of the snakes prediction challenge. This was based on an implementation of https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
-
-# Round 2 Submission
+# Submission
 
 To submit to the challenge you'll need to ensure you've set up an appropriate repository structure, create a private git repository at https://gitlab.aicrowd.com with the contents of your submission, and push a git tag corresponding to the version of your repository you'd like to submit.
 
@@ -162,4 +164,5 @@ You now should be able to see the details of your submission at :
 **Best of Luck**
 
 # Author
-Shivam Khandelwal (shivam@aicrowd.com)
+* Sharada Mohanty (mohanty@aicrowd.com)
+* Shivam Khandelwal (shivam@aicrowd.com)
