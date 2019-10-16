@@ -2,3 +2,4 @@ data/round1
 data/train
 random_prediction.csv
 __pycache__
+data/*
