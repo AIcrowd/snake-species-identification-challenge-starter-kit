@@ -2,6 +2,7 @@
 import random
 import json
 import numpy as np
+import pandas as pd
 import argparse
 import base64
 
@@ -21,45 +22,25 @@ import json
 ################################################################################################################
 
 * AICROWD_TEST_IMAGES_PATH : Absolute path to  folder containing all the test images
-* AICROWD_TEST_ANNOTATIONS_PATH : Absolute path to a CSV file containing extra metadata about each of the test images
-
+* AICROWD_TEST_METADATA_PATH : Absolute path to a CSV file containing extra metadata about each of the test images
 * AICROWD_PREDICTIONS_OUTPUT_PATH : path where you are supposed to write the output predictions.csv
-
-* 
 """
+AICROWD_TEST_IMAGES_PATH = os.getenv("AICROWD_TEST_IMAGES_PATH", "./data/test_images_small/")
+AICROWD_TEST_METADATA_PATH = os.getenv("AICROWD_TEST_METADATA_PATH", "./data/test_metadata_small.csv")
+AICROWD_PREDICTIONS_OUTPUT_PATH = os.getenv("AICROWD_PREDICTIONS_OUTPUT_PATH", "random_prediction.csv")
 
-def gather_images(test_images_path):
-    images = glob.glob(os.path.join(
-        test_images_path, "*.jpg"
-    ))
-    return images
+# Note : These list of snake-species are the ones that are represented in the training set of this round
+VALID_SNAKE_SPECIES = ['agkistrodon-contortrix', 'agkistrodon-piscivorus', 'ahaetulla-prasina', 'arizona-elegans', 'boa-imperator', 'bothriechis-schlegelii', 'bothrops-asper', 'carphophis-amoenus', 'charina-bottae', 'coluber-constrictor', 'contia-tenuis', 'coronella-austriaca', 'crotalus-adamanteus', 'crotalus-atrox', 'crotalus-cerastes', 'crotalus-horridus', 'crotalus-molossus', 'crotalus-oreganus', 'crotalus-ornatus', 'crotalus-pyrrhus', 'crotalus-ruber', 'crotalus-scutulatus', 'crotalus-viridis', 'diadophis-punctatus', 'epicrates-cenchria', 'haldea-striatula', 'heterodon-nasicus', 'heterodon-platirhinos', 'hierophis-viridiflavus', 'hypsiglena-jani', 'lampropeltis-californiae', 'lampropeltis-getula', 'lampropeltis-holbrooki', 'lampropeltis-triangulum', 'lichanura-trivirgata', 'masticophis-flagellum', 'micrurus-tener', 'morelia-spilota', 'naja-naja', 'natrix-maura', 'natrix-natrix', 'natrix-tessellata', 'nerodia-cyclopion', 'nerodia-erythrogaster', 'nerodia-fasciata', 'nerodia-rhombifer', 'nerodia-sipedon', 'nerodia-taxispilota', 'opheodrys-aestivus', 'opheodrys-vernalis', 'pantherophis-alleghaniensis', 'pantherophis-emoryi', 'pantherophis-guttatus', 'pantherophis-obsoletus', 'pantherophis-spiloides', 'pantherophis-vulpinus', 'phyllorhynchus-decurtatus', 'pituophis-catenifer', 'pseudechis-porphyriacus', 'python-bivittatus', 'python-regius', 'regina-septemvittata', 'rena-dulcis', 'rhinocheilus-lecontei', 'sistrurus-catenatus', 'sistrurus-miliarius', 'sonora-semiannulata', 'storeria-dekayi', 'storeria-occipitomaculata', 'tantilla-gracilis', 'thamnophis-cyrtopsis', 'thamnophis-elegans', 'thamnophis-hammondii', 'thamnophis-marcianus', 'thamnophis-ordinoides', 'thamnophis-proximus', 'thamnophis-radix', 'thamnophis-sirtalis', 'tropidoclonion-lineatum', 'vermicella-annulata', 'vipera-aspis', 'vipera-berus', 'virginia-valeriae', 'xenodon-rabdocephalus', 'zamenis-longissimus']
 
-def gather_image_names(test_images_path):
-    images = gather_images(test_images_path)
-    image_names = [os.path.basename(image_path) for image_path in images]
-    return image_names
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=0) # only difference
 
-def get_image_path(image_name):
-    test_images_path = os.getenv("AICROWD_TEST_IMAGES_PATH", False)
-    return os.path.join(test_images_path, image_name)
-
-def gather_input_output_path():
-    test_images_path = os.getenv("AICROWD_TEST_IMAGES_PATH", False)
-    assert test_images_path != False, "Please provide the path to the test images using the environment variable : AICROWD_TEST_IMAGES_PATH"
-
-    predictions_output_path = os.getenv("AICROWD_PREDICTIONS_OUTPUT_PATH", False)
-    assert predictions_output_path != False, "Please provide the output path (for writing the predictions.csv) using the environment variable : AICROWD_PREDICTIONS_OUTPUT_PATH"
-
-    return test_images_path, predictions_output_path
-
-def get_snake_classes():
-    with open('data/class_idx_mapping.csv') as f:
-        classes = []
-        for line in f.readlines()[1:]:
-            class_name = line.split(",")[0]
-            classes.append(class_name)
-    return classes
-
+def get_random_prediction(image_id):
+    predictions = [np.random.rand() for _ in VALID_SNAKE_SPECIES]
+    predictions = softmax(predictions)
+    return predictions
 
 def run():
     ########################################################################
@@ -67,37 +48,35 @@ def run():
     ########################################################################
     aicrowd_helpers.execution_start()
 
-    ########################################################################
-    # Gather Input and Output paths from environment variables
-    ########################################################################
-    test_images_path, predictions_output_path = gather_input_output_path()
 
     ########################################################################
-    # Gather Image Names
-    ########################################################################
-    image_names = gather_image_names(test_images_path)
+    # Load Tests Meta Data file
+    #       and iterate over all its rows
+    #
+    #       Each Row contains the following information : 
+    #
+    #       - hashed_id  : a unique id for each test image
+    #       - filename   : filename of the image
+    #       - country    : Country where this image was taken
+    #       - continent  : Continent where this image was taken
+    ########################################################################    
 
-    ########################################################################
-    # Do your magic here to train the model
-    ########################################################################
-    classes = get_snake_classes()
+    OUTPUT_LINES = []
+    HEADER = ['hashed_id'] + VALID_SNAKE_SPECIES
+    OUTPUT_LINES.append(",".join(HEADER))
 
-    def softmax(x):
-        """Compute softmax values for each sets of scores in x."""
-        e_x = np.exp(x - np.max(x))
-        return e_x / e_x.sum(axis=0)
+    tests_df = pd.read_csv(AICROWD_TEST_METADATA_PATH)
+    for _idx, row in tests_df.iterrows():
+        image_id = row["hashed_id"]
+        country = row["country"]
+        continent = row["continent"]
+        filename = row["filename"]
+        filepath = os.path.join(AICROWD_TEST_IMAGES_PATH, filename)
 
-    ########################################################################
-    # Generate Predictions
-    ########################################################################
-    LINES = []
-    LINES.append(','.join(['filename'] + classes))
-    predictions = []
-    for image_name in image_names:
-        probs = softmax(np.random.rand(45))
-        probs = list(map(str, probs))
-        LINES.append(",".join([image_name] + probs))
-
+        predictions = get_random_prediction(image_id)
+        PREDICTION_LINE = [image_id] + [str(x) for x in predictions.tolist()]
+        OUTPUT_LINES.append(",".join(PREDICTION_LINE))
+        
         ########################################################################
         # Register Prediction
         #
@@ -107,22 +86,22 @@ def run():
         # will see progress of the evaluation as 0 until it is complete
         #
         # Here you simply announce that you completed processing a set of
-        # image_names
+        # image_ids
         ########################################################################
         aicrowd_helpers.execution_progress({
-            "image_names" : [image_name]
+            "image_ids" : [image_id] ### NOTE : This is an array of image_ids 
         })
 
 
     # Write output
-    fp = open(predictions_output_path, "w")
-    fp.write("\n".join(LINES))
+    fp = open(AICROWD_PREDICTIONS_OUTPUT_PATH, "w")
+    fp.write("\n".join(OUTPUT_LINES))
     fp.close()
     ########################################################################
     # Register Prediction Complete
     ########################################################################
     aicrowd_helpers.execution_success({
-        "predictions_output_path" : predictions_output_path
+        "predictions_output_path" : AICROWD_PREDICTIONS_OUTPUT_PATH
     })
 
 

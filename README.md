@@ -14,17 +14,17 @@ For now, we would like to make the barrier to entry much lower and demonstrate t
 # Dataset
 The datasets are available in the [Resources section of the challenge page](https://www.aicrowd.com/challenges/snake-species-identification-challenge/dataset_files), and on following the links, you will have 4 files : 
 
-* `round1_test.tar.gz`
-* `train.tar.gz`
-* `sample_submission.csv`
-* `class_idx_mapping.csv`
+* `train_images.tar.gz`
+* `train_labels.tar.gz`
+* `test_images_small.tar.gz`
+* `test_annotations_small.csv`
 
 
-`train.tar.gz` expands into a folder containing 45 subfolders, of the form : 
+`train_images.tar.gz.tar.gz` expands into a folder containing 45 subfolders, of the form : 
 
 ```
 .
-└── train
+└── train_images.tar.gz
     └── class-X
 ```
 

@@ -1,19 +1,19 @@
 #!/usr/bin/env python
-import crowdai_api
+import aicrowd_api
 import os
 
 ########################################################################
 # Instatiate Event Notifier
 ########################################################################
-crowdai_events = crowdai_api.events.CrowdAIEvents()
+aicrowd_events = aicrowd_api.events.AIcrowdEvents()
 
 
 def execution_start():
     ########################################################################
     # Register Evaluation Start event
     ########################################################################
-    crowdai_events.register_event(
-                event_type=crowdai_events.CROWDAI_EVENT_INFO,
+    aicrowd_events.register_event(
+                event_type=aicrowd_events.AICROWD_EVENT_INFO,
                 message="execution_started",
                 payload={ #Arbitrary Payload
                     "event_type": "snakes_challenge:execution_started"
@@ -22,16 +22,16 @@ def execution_start():
 
 
 def execution_progress(progress_payload):
-    image_names = progress_payload["image_names"]
+    image_ids = progress_payload["image_ids"]
     ########################################################################
     # Register Evaluation Progress event
     ########################################################################
-    crowdai_events.register_event(
-                event_type=crowdai_events.CROWDAI_EVENT_INFO,
+    aicrowd_events.register_event(
+                event_type=aicrowd_events.AICROWD_EVENT_INFO,
                 message="execution_progress",
                 payload={ #Arbitrary Payload
                     "event_type": "snakes_challenge:execution_progress",
-                    "image_names" : image_names
+                    "image_ids" : image_ids
                     }
                 )
 
@@ -40,12 +40,12 @@ def execution_success(payload):
     ########################################################################
     # Register Evaluation Complete event
     ########################################################################
-    expected_output_path = os.getenv("AICROWD_PREDICTIONS_OUTPUT_PATH", False)
+    expected_output_path = os.getenv("AICROWD_PREDICTIONS_OUTPUT_PATH", "random_prediction.csv")
     if expected_output_path != predictions_output_path:
         raise Exception("Please write the output to the path specified in the environment variable : AICROWD_PREDICTIONS_OUTPUT_PATH instead of {}".format(predictions_output_path))
 
-    crowdai_events.register_event(
-                event_type=crowdai_events.CROWDAI_EVENT_SUCCESS,
+    aicrowd_events.register_event(
+                event_type=aicrowd_events.AICROWD_EVENT_SUCCESS,
                 message="execution_success",
                 payload={ #Arbitrary Payload
                     "event_type": "snakes_challenge:execution_success",
@@ -58,8 +58,8 @@ def execution_error(error):
     ########################################################################
     # Register Evaluation Complete event
     ########################################################################
-    crowdai_events.register_event(
-                event_type=crowdai_events.CROWDAI_EVENT_ERROR,
+    aicrowd_events.register_event(
+                event_type=aicrowd_events.AICROWD_EVENT_ERROR,
                 message="execution_error",
                 payload={ #Arbitrary Payload
                     "event_type": "snakes_challenge:execution_error",
