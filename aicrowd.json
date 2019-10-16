@@ -1,0 +1,6 @@
+{
+    "challenge_id" : "snake-species-identification-challenge",
+    "grader_id": "snake-species-identification-challenge",
+    "authors" : ["aicrowd-bot"],
+    "description" : "Snakes Random Agent"
+}

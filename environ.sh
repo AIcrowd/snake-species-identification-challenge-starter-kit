@@ -1,0 +1,2 @@
+AICROWD_PREDICTIONS_OUTPUT_PATH="data/predictions.csv"
+AICROWD_TEST_IMAGES_PATH="data/images"
