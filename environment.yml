@@ -22,7 +22,7 @@ dependencies:
   - zlib=1.2.11
   - pip:
     - chardet==3.0.4
-    - crowdai-api==0.1.21
+    - aicrowd-api
     - idna==2.8
     - numpy==1.16.4
     - pandas==0.24.2
