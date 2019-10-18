@@ -7,9 +7,9 @@ This is a starter kit for the [Snakes Species Identification Challenge](https://
 # Problem Statement
 In this challenge you will be provided with a dataset of RGB images of snakes, and their corresponding species (class). The goal is to train a classification model.
 
-The difficulty of the challenge relies on the dataset characteristics, as there might be a high intraclass variance for certain classes and a low interclass variance among others, as shown in the examples from the Datasets section. Also, the distribution of images between class is not equal for all classes: the class with the most images has 11,092, while the class with the fewest images has 517.
+The difficulty of the challenge relies on the dataset characteristics, as there might be a high intraclass variance for certain classes and a low interclass variance among others, as shown in the examples from the Datasets section. Also, the distribution of images between class is not equal for all classes: the class with the most images has 17,749, while the class with the fewest images has 552.
 
-For now, we would like to make the barrier to entry much lower and demonstrate that an approach works well on 45 species and 82,601 images. The idea would be then to renew the challenge every 4 months in order to get closer to our final goal, which is to build an algorithm which best predicts which antivenin should be given (if any) when given a specific image.
+For now, we would like to make the barrier to entry much lower and demonstrate that an approach works well on 85 species and 130150 images. The idea would be then to renew the challenge every 4 months in order to get closer to our final goal, which is to build an algorithm which best predicts which antivenin should be given (if any) when given a specific image.
 
 # Dataset
 The datasets are available in the [Resources section of the challenge page](https://www.aicrowd.com/challenges/snake-species-identification-challenge/dataset_files), and on following the links, you will have 4 files : 
