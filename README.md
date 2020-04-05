@@ -7,70 +7,89 @@ This is a starter kit for the [Snakes Species Identification Challenge](https://
 # Problem Statement
 In this challenge you will be provided with a dataset of RGB images of snakes, and their corresponding species (class). The goal is to train a classification model.
 
-The difficulty of the challenge relies on the dataset characteristics, as there might be a high intraclass variance for certain classes and a low interclass variance among others, as shown in the examples from the Datasets section. Also, the distribution of images between class is not equal for all classes: the class with the most images has 17,749, while the class with the fewest images has 552.
+The difficulty of the challenge relies on the dataset characteristics, as there might be a high intraclass variance for certain classes and a low interclass variance among others, as shown in the examples from the Datasets section. Also, the distribution of images between class is not equal for all classes: the class with the most images has 12201, while the class with the fewest images has 17. (top & bottom 15 classes shared below - based on training data)
 
-For now, we would like to make the barrier to entry much lower and demonstrate that an approach works well on 85 species and 130150 images. The idea would be then to renew the challenge every 4 months in order to get closer to our final goal, which is to build an algorithm which best predicts which antivenin should be given (if any) when given a specific image.
+| scientific_name             | Count | scientific_name              | Count |
+|-----------------------------|-------|------------------------------|-------|
+| thamnophis-sirtalis         | 12201 | agkistrodon-laticinctus      | 17    |
+| storeria-dekayi             | 9708  | bitis-armata                 | 17    |
+| pantherophis-obsoletus      | 8767  | bothrocophias-microphthalmus | 17    |
+| crotalus-atrox              | 8679  | chironius-bicarinatus        | 17    |
+| pituophis-catenifer         | 7113  | geophis-hoffmanni            | 17    |
+| nerodia-sipedon             | 6436  | hebius-miyajimae             | 17    |
+| agkistrodon-contortrix      | 4946  | lycodon-effraenis            | 17    |
+| diadophis-punctatus         | 4406  | macrovipera-schweizeri       | 17    |
+| lampropeltis-triangulum     | 4326  | naja-pallida                 | 17    |
+| pantherophis-alleghaniensis | 4282  | philothamnus-punctatus       | 17    |
+| nerodia-erythrogaster       | 4276  | sibynophis-collaris          | 17    |
+| lampropeltis-californiae    | 4158  | spalerosophis-dolichospilus  | 17    |
+| agkistrodon-piscivorus      | 4011  | thamnophis-chrysocephalus    | 17    |
+| opheodrys-aestivus          | 3931  | agkistrodon-taylori          | 18    |
+| crotalus-horridus           | 3571  | boiga-beddomei               | 18    |
+
+The distribution of Snake Species and their image count looks as follows:
+
+![Distribution of snake species](https://i.imgur.com/5QYBhKY.png)
+
+To keep the barrier to entry much lower and demonstrate that an approach works well, we started with 85 species and 130150 images in previous round, and these numbers are increasing with every round. The idea would be then to renew the challenge every 4 months in order to get closer to our final goal, which is to build an algorithm which best predicts which antivenin should be given (if any) when given a specific image.
 
 # Dataset
-The datasets are available in the [Resources section of the challenge page](https://www.aicrowd.com/challenges/snake-species-identification-challenge/dataset_files), and on following the links, you will have 4 files : 
+The datasets are available in the [Resources section of the challenge page](https://www.aicrowd.com/challenges/snake-species-identification-challenge/dataset_files), and on following the links, you have following files : 
 
 * `train_images.tar.gz`
 * `train_labels.tar.gz`
-* `test_images_small.tar.gz`
-* `test_metadata_small.tar.gz`
+* `validate_images.tar.gz`
+* `validate_labels.tar.gz`
+* `validate_images_small.tar.gz`
+* `validate_labels_small.tar.gz`
 
 Where : 
 
-* `train_images.tar.gz` untars into a folder containing `129952` images of snakes spread across `85` different snake species. 
+* `train_images.tar.gz` untars into a folder containing `245185` images of snakes spread across `783` different snake species. 
 * `train_labels.tar.gz` untars into a CSV with the following structure : 
-```
-hashed_id,country,continent,scientific_name,filename
-fd148672d8,United States of America,North America,nerodia-sipedon,fd148672d8.jpg
-09874637dc,United States of America,North America,nerodia-sipedon,09874637dc.jpg
-12da366539,United States of America,North America,nerodia-sipedon,12da366539.jpg
-69b2c09380,United States of America,North America,pantherophis-obsoletus,69b2c09380.jpg
-c32413ddbb,United States of America,North America,crotalus-horridus,c32413ddbb.jpg
-1707c259ed,United States of America,North America,heterodon-platirhinos,1707c259ed.jpg
-```
+
+| scientific_name           | country                  | hashed_id  |
+|---------------------------|--------------------------|------------|
+| crotalus-pyrrhus          | United States of America | f670636e2f |
+| phyllorhynchus-decurtatus | United States of America | 5bfe5fa2ef |
+| thamnophis-marcianus      | United States of America | 94d2da23c9 |
+| boa-constrictor           | UNKNOWN                  | 871c3b709a |
+| crotalus-atrox            | United States of America | e983981e77 |
+| boa-imperator             | Mexico                   | ba9f7def25 |
+| masticophis-flagellum     | United States of America | 2402a939c3 |
+| coluber-constrictor       | United States of America | af5eacaac1 |
+| storeria-dekayi           | United States of America | ba74f6f6c1 |
 
 With the following columns : 
 
-    - `hashed_id` : Unique ID of a single image
-    - `filename` : Name of the file corresponding to this case (the images are present in the `train_images.tar.gz`)
+    - `hashed_id` : Unique ID of a single image (files are present in `train_images.tar.gz` with name `{hashed_id}.jpg`
     - `scientific_name` : Unique class name for the image in question
     - `country` : Country where the image was taken
-    - `continent` : Continent where the image was taken
 
 
-* `test_images_small.tar.gz` expands into a folder `.jpg` files representing a **small sample** of the test set. This has been provided to help you locally test your submission before submitting it.
-* `test_metadata_small.tar.gz` expands into a CSV file with the following structure : 
-```
-hashed_id,country,continent,filename
-209babdafc,United States of America,North America,209babdafc.jpg
-bc39befd80,United States of America,North America,bc39befd80.jpg
-2f7a671e66,United States of America,North America,2f7a671e66.jpg
-3780a13264,United States of America,North America,3780a13264.jpg
-f7c234cc00,United States of America,North America,f7c234cc00.jpg
-2073a92f7e,United States of America,North America,2073a92f7e.jpg
-9365f16d59,United States of America,North America,9365f16d59.jpg
-31224dcc43,United States of America,North America,31224dcc43.jpg
-28a07aa909,United States of America,North America,28a07aa909.jpg
-```
+* `validate_images.tar.gz` expands into a folder `.jpg` files representing a sample with similar distribution as test data. This has been provided to help you locally run validation phase over your model.
+* `validate_labels.tar.gz` expands into a CSV file with the following structure : 
 
-With the following columns : 
+| scientific_name       | country                  | hashed_id  |
+|-----------------------|--------------------------|------------|
+| lycodon-ruhstrati     | UNKNOWN                  | bac3ff1139 |
+| nerodia-sipedon       | Canada                   | 516a58ab5c |
+| naja-nigricollis      | UNKNOWN                  | b8319014ed |
+| crotalus-atrox        | United States of America | cfed281bac |
+| symphimus-mayae       | Mexico                   | d237616cb2 |
+| pantherophis-vulpinus | United States of America | b581db474b |
+| storeria-dekayi       | United States of America | fad71aeca3 |
+| opheodrys-aestivus    | United States of America | 3fd4dea662 |
+| storeria-dekayi       | United States of America | 83402064a6 |
 
-    - `hashed_id` : Unique ID of a single test image
-    - `filename` : Name of the file corresponding to this case (the images are present in the `train_images.tar.gz`)
-    - `country` : Country where the image was taken
-    - `continent` : Continent where the image was taken
 
-and the task at hand is to predict the probability distribution for the possible values in the `scientific_name` column (as provided in the training annotations). 
+The files `validate_images_small.tar.gz` and `validate_labels_small.tar.gz` are **small subset** of validation data, just to try out your submission locally without doing heavy downloads.
 
 Before moving into the next phase, it would be good to download the datasets from the above mentioned links, and organize them in the `./data` folder with the following folder structure : 
 
 ```
 ├── data
-│   ├── test_images_small
+│   ├── validate_images_small
 │   │   ├── 01978e1d8d.jpg
 │   │   ├── 019d1e8cae.jpg
 │   │   ├── 04a3809dda.jpg
@@ -80,7 +99,7 @@ Before moving into the next phase, it would be good to download the datasets fro
 │   │   ├── fbb98a8213.jpg
 │   │   ├── fc9fd55077.jpg
 │   │   └── fce0ab02dd.jpg
-│   └── test_metadata_small.csv
+│   └── validate_labels_small.csv
 ```
 **NOTE** : The training related files and directories are excluded in the illustration above for simplicity.
 
@@ -113,11 +132,12 @@ Each repository should have a aicrowd.json file with the following fields:
     "challenge_id" : "snake-species-identification-challenge",
     "grader_id": "snake-species-identification-challenge",
     "authors" : ["aicrowd-user"],
-    "description" : "Snakes Random Classification Agent"
+    "description" : "Snakes Random Classification Agent",
+    "debug" : "false"
 }
 ```
 
-This file is used to identify your submission as a part of the Snake Species Identification Challenge.  You must use the `challenge_id` and `grader_id` specified above in the submission. 
+This file is used to identify your submission as a part of the Snake Species Identification Challenge.  You must use the `challenge_id` and `grader_id` specified above in the submission. You can enable ["debug" mode](https://discourse.aicrowd.com/t/how-to-view-logs-for-your-submission/2370) for having quicker submission with 100 test image, for integration testing, those submissions score would not be counted toward leaderboard.
 
 #### Submission environment configuration
 
