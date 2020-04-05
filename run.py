@@ -25,12 +25,12 @@ import json
 * AICROWD_TEST_METADATA_PATH : Absolute path to a CSV file containing extra metadata about each of the test images
 * AICROWD_PREDICTIONS_OUTPUT_PATH : path where you are supposed to write the output predictions.csv
 """
-AICROWD_TEST_IMAGES_PATH = os.getenv("AICROWD_TEST_IMAGES_PATH", "./data/test_images_small/")
-AICROWD_TEST_METADATA_PATH = os.getenv("AICROWD_TEST_METADATA_PATH", "./data/test_metadata_small.csv")
+AICROWD_TEST_IMAGES_PATH = os.getenv("AICROWD_TEST_IMAGES_PATH", "./data/validate_images_small/")
+AICROWD_TEST_METADATA_PATH = os.getenv("AICROWD_TEST_METADATA_PATH", "./data/validate_labels_small.csv")
 AICROWD_PREDICTIONS_OUTPUT_PATH = os.getenv("AICROWD_PREDICTIONS_OUTPUT_PATH", "random_prediction.csv")
 
-# Note : These list of snake-species are the ones that are represented in the training set of this round
-VALID_SNAKE_SPECIES = ['agkistrodon-contortrix', 'agkistrodon-piscivorus', 'ahaetulla-prasina', 'arizona-elegans', 'boa-imperator', 'bothriechis-schlegelii', 'bothrops-asper', 'carphophis-amoenus', 'charina-bottae', 'coluber-constrictor', 'contia-tenuis', 'coronella-austriaca', 'crotalus-adamanteus', 'crotalus-atrox', 'crotalus-cerastes', 'crotalus-horridus', 'crotalus-molossus', 'crotalus-oreganus', 'crotalus-ornatus', 'crotalus-pyrrhus', 'crotalus-ruber', 'crotalus-scutulatus', 'crotalus-viridis', 'diadophis-punctatus', 'epicrates-cenchria', 'haldea-striatula', 'heterodon-nasicus', 'heterodon-platirhinos', 'hierophis-viridiflavus', 'hypsiglena-jani', 'lampropeltis-californiae', 'lampropeltis-getula', 'lampropeltis-holbrooki', 'lampropeltis-triangulum', 'lichanura-trivirgata', 'masticophis-flagellum', 'micrurus-tener', 'morelia-spilota', 'naja-naja', 'natrix-maura', 'natrix-natrix', 'natrix-tessellata', 'nerodia-cyclopion', 'nerodia-erythrogaster', 'nerodia-fasciata', 'nerodia-rhombifer', 'nerodia-sipedon', 'nerodia-taxispilota', 'opheodrys-aestivus', 'opheodrys-vernalis', 'pantherophis-alleghaniensis', 'pantherophis-emoryi', 'pantherophis-guttatus', 'pantherophis-obsoletus', 'pantherophis-spiloides', 'pantherophis-vulpinus', 'phyllorhynchus-decurtatus', 'pituophis-catenifer', 'pseudechis-porphyriacus', 'python-bivittatus', 'python-regius', 'regina-septemvittata', 'rena-dulcis', 'rhinocheilus-lecontei', 'sistrurus-catenatus', 'sistrurus-miliarius', 'sonora-semiannulata', 'storeria-dekayi', 'storeria-occipitomaculata', 'tantilla-gracilis', 'thamnophis-cyrtopsis', 'thamnophis-elegans', 'thamnophis-hammondii', 'thamnophis-marcianus', 'thamnophis-ordinoides', 'thamnophis-proximus', 'thamnophis-radix', 'thamnophis-sirtalis', 'tropidoclonion-lineatum', 'vermicella-annulata', 'vipera-aspis', 'vipera-berus', 'virginia-valeriae', 'xenodon-rabdocephalus', 'zamenis-longissimus']
+# Note : These list of snake-species are the ones that are represented in the training set of this round 4
+VALID_SNAKE_SPECIES = list(pd.read_csv("round4_classes.csv")["scientific_name"])
 
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
@@ -56,9 +56,7 @@ def run():
     #       Each Row contains the following information : 
     #
     #       - hashed_id  : a unique id for each test image
-    #       - filename   : filename of the image
     #       - country    : Country where this image was taken
-    #       - continent  : Continent where this image was taken
     ########################################################################    
 
     OUTPUT_LINES = []
@@ -69,8 +67,7 @@ def run():
     for _idx, row in tests_df.iterrows():
         image_id = row["hashed_id"]
         country = row["country"]
-        continent = row["continent"]
-        filename = row["filename"]
+        filename = "{}.jpg".format(image_id)
         filepath = os.path.join(AICROWD_TEST_IMAGES_PATH, filename)
 
         predictions = get_random_prediction(image_id)
