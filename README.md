@@ -48,39 +48,40 @@ Where :
 * `train_images.tar.gz` untars into a folder containing `245185` images of snakes spread across `783` different snake species. 
 * `train_labels.tar.gz` untars into a CSV with the following structure : 
 
-| scientific_name           | country                  | hashed_id  |
-|---------------------------|--------------------------|------------|
-| crotalus-pyrrhus          | United States of America | f670636e2f |
-| phyllorhynchus-decurtatus | United States of America | 5bfe5fa2ef |
-| thamnophis-marcianus      | United States of America | 94d2da23c9 |
-| boa-constrictor           | UNKNOWN                  | 871c3b709a |
-| crotalus-atrox            | United States of America | e983981e77 |
-| boa-imperator             | Mexico                   | ba9f7def25 |
-| masticophis-flagellum     | United States of America | 2402a939c3 |
-| coluber-constrictor       | United States of America | af5eacaac1 |
-| storeria-dekayi           | United States of America | ba74f6f6c1 |
+| scientific_name           | country                  | hashed_id  | continent     |
+|---------------------------|--------------------------|------------|---------------|
+| crotalus-pyrrhus          | United States of America | f670636e2f | North America |
+| phyllorhynchus-decurtatus | United States of America | 5bfe5fa2ef | North America |
+| thamnophis-marcianus      | United States of America | 94d2da23c9 | North America |
+| boa-constrictor           | UNKNOWN                  | 871c3b709a | UNKNOWN       |
+| crotalus-atrox            | United States of America | e983981e77 | North America |
+| boa-imperator             | Mexico                   | ba9f7def25 | North America |
+| masticophis-flagellum     | United States of America | 2402a939c3 | North America |
+| coluber-constrictor       | United States of America | af5eacaac1 | North America |
+| storeria-dekayi           | United States of America | ba74f6f6c1 | North America |
 
 With the following columns : 
 
     - `hashed_id` : Unique ID of a single image (files are present in `train_images.tar.gz` with name `{hashed_id}.jpg`
     - `scientific_name` : Unique class name for the image in question
     - `country` : Country where the image was taken
+    - `continent` : Continent where the image was taken
 
 
 * `validate_images.tar.gz` expands into a folder `.jpg` files representing a sample with similar distribution as test data. This has been provided to help you locally run validation phase over your model.
 * `validate_labels.tar.gz` expands into a CSV file with the following structure : 
 
-| scientific_name       | country                  | hashed_id  |
-|-----------------------|--------------------------|------------|
-| lycodon-ruhstrati     | UNKNOWN                  | bac3ff1139 |
-| nerodia-sipedon       | Canada                   | 516a58ab5c |
-| naja-nigricollis      | UNKNOWN                  | b8319014ed |
-| crotalus-atrox        | United States of America | cfed281bac |
-| symphimus-mayae       | Mexico                   | d237616cb2 |
-| pantherophis-vulpinus | United States of America | b581db474b |
-| storeria-dekayi       | United States of America | fad71aeca3 |
-| opheodrys-aestivus    | United States of America | 3fd4dea662 |
-| storeria-dekayi       | United States of America | 83402064a6 |
+| scientific_name       | country                  | hashed_id  | continent     |
+|-----------------------|--------------------------|------------|---------------|
+| lycodon-ruhstrati     | UNKNOWN                  | bac3ff1139 | UNKNOWN       |
+| nerodia-sipedon       | Canada                   | 516a58ab5c | North America |
+| naja-nigricollis      | UNKNOWN                  | b8319014ed | UNKNOWN       |
+| crotalus-atrox        | United States of America | cfed281bac | North America |
+| symphimus-mayae       | Mexico                   | d237616cb2 | North America |
+| pantherophis-vulpinus | United States of America | b581db474b | North America |
+| storeria-dekayi       | United States of America | fad71aeca3 | North America |
+| opheodrys-aestivus    | United States of America | 3fd4dea662 | North America |
+| storeria-dekayi       | United States of America | 83402064a6 | North America |
 
 
 The files `validate_images_small.tar.gz` and `validate_labels_small.tar.gz` are **small subset** of validation data, just to try out your submission locally without doing heavy downloads.

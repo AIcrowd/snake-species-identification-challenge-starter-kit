@@ -57,6 +57,7 @@ def run():
     #
     #       - hashed_id  : a unique id for each test image
     #       - country    : Country where this image was taken
+    #       - continent  : Continent where this image was taken
     ########################################################################    
 
     OUTPUT_LINES = []
@@ -67,6 +68,7 @@ def run():
     for _idx, row in tests_df.iterrows():
         image_id = row["hashed_id"]
         country = row["country"]
+        continent = row["continent"]
         filename = "{}.jpg".format(image_id)
         filepath = os.path.join(AICROWD_TEST_IMAGES_PATH, filename)
 
